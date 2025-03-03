@@ -123,22 +123,18 @@ async def stop_bot():
     print("⏳ Остановка бота...")
     await app.shutdown()
 
-# 🔹 Главная асинхронная функция
-async def main():
-    app = Application.builder().token(TELEGRAM_TOKEN).build()
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, telegram_text_handler))
-    app.add_handler(MessageHandler(filters.PHOTO, telegram_photo_handler))
-    app.add_handler(MessageHandler(filters.VIDEO, telegram_video_handler))
+# 🔹 Запускаем бота
+app = Application.builder().token(TELEGRAM_TOKEN).build()
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, telegram_text_handler))
+app.add_handler(MessageHandler(filters.PHOTO, telegram_photo_handler))
+app.add_handler(MessageHandler(filters.VIDEO, telegram_video_handler))
 
-    # 🔹 Настраиваем автоматическое выключение в 23:00
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(stop_bot, "cron", hour=23, minute=0)
-    scheduler.start()
+# 🔹 Настраиваем автоматическое выключение в 23:00
+scheduler = AsyncIOScheduler()
+scheduler.add_job(stop_bot, "cron", hour=23, minute=0)
+scheduler.start()
 
-    print("✅ Бот запущен...")
-    await app.run_polling()
+print("✅ Бот запущен...")
 
-# 🔹 Запускаем бота, не используя asyncio.run
-loop = asyncio.get_event_loop()
-loop.create_task(main())
-loop.run_forever()
+# Запускаем polling без asyncio.run
+app.run_polling()
