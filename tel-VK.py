@@ -119,22 +119,25 @@ async def telegram_video_handler(update: Update, context):
     await update.message.reply_text("🎥 Видео опубликовано в ВК!")
 
 # 🔹 Функция выключения бота
-async def stop_bot():
+async def stop_bot(app):
     print("⏳ Остановка бота...")
     await app.shutdown()
 
 # 🔹 Запускаем бота
-app = Application.builder().token(TELEGRAM_TOKEN).build()
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, telegram_text_handler))
-app.add_handler(MessageHandler(filters.PHOTO, telegram_photo_handler))
-app.add_handler(MessageHandler(filters.VIDEO, telegram_video_handler))
+async def main():
+    app = Application.builder().token(TELEGRAM_TOKEN).build()
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, telegram_text_handler))
+    app.add_handler(MessageHandler(filters.PHOTO, telegram_photo_handler))
+    app.add_handler(MessageHandler(filters.VIDEO, telegram_video_handler))
 
-# 🔹 Настраиваем автоматическое выключение в 23:00
-scheduler = AsyncIOScheduler()
-scheduler.add_job(stop_bot, "cron", hour=23, minute=0)
-scheduler.start()
+    # 🔹 Настраиваем автоматическое выключение в 23:00
+    scheduler = AsyncIOScheduler()
+    scheduler.add_job(stop_bot, "cron", hour=23, minute=0, args=[app])  # передаем app для завершения
+    scheduler.start()
 
-print("✅ Бот запущен...")
+    print("✅ Бот запущен...")
+    await app.run_polling()
 
-# Запускаем polling без asyncio.run
-app.run_polling()
+# 🔹 Запуск основного цикла
+if __name__ == "__main__":
+    asyncio.run(main())
