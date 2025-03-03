@@ -1,5 +1,1 @@
-Flask==2.2.5
-requests>=2.31.0
-gunicorn==21.2.0  # Если развертываешь веб-приложение
-python-telegram-bot==20.8
-apscheduler
+requirements
