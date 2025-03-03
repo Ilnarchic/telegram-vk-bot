@@ -131,7 +131,7 @@ app.add_handler(MessageHandler(filters.VIDEO, telegram_video_handler))
 
 # 🔹 Настраиваем автоматическое выключение в 23:00
 scheduler = AsyncIOScheduler()
-scheduler.add_job(stop_bot, "cron", hour=23, minute=0)
+scheduler.add_job(stop_bot, "cron", hour=21, minute=0)
 scheduler.start()
 
 print("✅ Бот запущен...")
